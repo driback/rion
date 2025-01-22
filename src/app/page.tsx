@@ -16,9 +16,9 @@ const Home = async () => {
         <Link href="/">Rion</Link>
       </header>
       <main className="relative flex w-full flex-col gap-8 pb-20">
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-7 max-md:pt-4">
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-6 max-md:pt-4">
           {googleSub ? <Logout /> : <ConnectGoogle />}
-          <h1 className="font-medium text-[clamp(2rem,-1.5rem+8vw,2.5rem)]">
+          <h1 className="font-medium text-[clamp(2rem,-1.5rem+8vw,3rem)]">
             Hello there
           </h1>
         </div>
@@ -40,7 +40,7 @@ const Home = async () => {
             <h2 className="text-sm">Your recent tasks</h2>
             <Link
               href="/recents"
-              className="ml-auto flex items-center gap-1 text-sm"
+              className="ml-auto flex items-center gap-1 text-sm hover:underline"
             >
               View all
               <ArrowRightIcon className="size-3" />

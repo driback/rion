@@ -22,7 +22,18 @@ const ConnectGoogle = () => {
         type="button"
         onClick={handleLogin}
       >
-        {isPending ? 'Connecting...' : 'Connect'}
+        {isPending ? (
+          <span className="flex">
+            Connecting
+            <span className="inline-flex">
+              <span className="animate-pulse duration-500">.</span>
+              <span className="animate-pulse delay-500 duration-500">.</span>
+              <span className="animate-pulse delay-1000 duration-500">.</span>
+            </span>
+          </span>
+        ) : (
+          'Connect'
+        )}
       </button>
     </div>
   );
