@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
       hmrRefreshes: true,
     },
   },
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;
