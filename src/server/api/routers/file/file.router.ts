@@ -1,7 +1,7 @@
-import { drive } from '@googleapis/drive';
-import { TRPCError } from '@trpc/server';
 import type { StrictNonNullable } from '~/app/types';
-import { oAuth2Client } from '~/configs/google-auth';
+
+import { TRPCError } from '@trpc/server';
+import { driveAuthClient } from '~/configs/google-drive';
 import { createTRPCRouter, protectedProcedure } from '../../trpc';
 import { CopyInput, CopyOutput, type TCopyOutput } from './file.schema';
 import { extractFileId } from './file.util';
@@ -11,34 +11,31 @@ export const fileRouter = createTRPCRouter({
     .input(CopyInput)
     .output(CopyOutput)
     .mutation(async ({ input }) => {
+      const fileId = extractFileId(input.url);
+      if (!fileId) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Could not extract file ID from URL',
+        });
+      }
+
       try {
-        const fileId = extractFileId(input.url);
-        if (!fileId) {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'Could not extract file ID from URL',
-          });
-        }
-
-        const driveClient = drive('v3');
-
-        const copyFile = await driveClient.files.copy({
-          auth: oAuth2Client,
+        const { data: copyData, status } = await driveAuthClient.files.copy({
           fileId,
           fields:
             'id, name, mimeType, size, webViewLink, iconLink, thumbnailLink',
         });
 
-        if (copyFile.status !== 200 || !copyFile.data) {
+        if (status !== 200 || !copyData) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
-            message: `Failed to copy file: ${copyFile.status}`,
+            message: `Failed to copy file: ${status}`,
           });
         }
 
-        const data = copyFile.data as StrictNonNullable<typeof copyFile.data>;
+        const data = copyData as StrictNonNullable<typeof copyData>;
 
-        const output: TCopyOutput = {
+        return {
           id: data.id,
           name: data.name,
           mimeType: data.mimeType,
@@ -47,12 +44,9 @@ export const fileRouter = createTRPCRouter({
           iconLink: data.iconLink,
           thumbnailLink: data.thumbnailLink,
           originalLink: input.url,
-        };
-
-        return output;
+        } satisfies TCopyOutput;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
-
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message:

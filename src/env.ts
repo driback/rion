@@ -6,6 +6,9 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     GOOGLE_REDIRECT_URI: z.string().url(),
+    NODE_ENV: z
+      .enum(['development', 'test', 'production'])
+      .default('development'),
     REDIS_URL: z
       .string()
       .regex(
