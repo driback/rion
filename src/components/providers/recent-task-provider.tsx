@@ -15,6 +15,7 @@ type RecentTaskState = {
 type RecentTaskAction = {
   setTask: (data: TCopyOutput) => void;
   setHasHydrated: (data: boolean) => void;
+  reset: () => void;
 };
 
 type RecentTaskStore = RecentTaskState & RecentTaskAction;
@@ -33,6 +34,7 @@ const createRecentTaskStore = (
         ...initState,
         setTask: (data) => set({ task: [...get().task, data] }),
         setHasHydrated: (state) => set({ _hasHydrated: state }),
+        reset: () => set({ task: [] }),
       }),
       {
         name: 'task',

@@ -1,41 +1,37 @@
 'use client';
 
+import { LoaderIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import { loginAction } from '~/server/actions/api.action';
+import GoogleIcon from './icons/googl-icon';
+import { Button } from './ui/button';
 
 const ConnectGoogle = () => {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const handleLogin = () => {
     startTransition(async () => {
-      await loginAction();
+      const { url } = await loginAction();
+      router.push(url);
     });
   };
 
   return (
-    <div className="inline-flex text-sm">
-      <p className="inline-block text-center">
-        You need to connect your google drive.
-      </p>
-      <button
-        className="ml-2 flex items-center gap-2 hover:underline"
-        type="button"
-        onClick={handleLogin}
-      >
-        {isPending ? (
-          <span className="flex">
-            Connecting
-            <span className="inline-flex">
-              <span className="animate-pulse duration-500">.</span>
-              <span className="animate-pulse delay-500 duration-500">.</span>
-              <span className="animate-pulse delay-1000 duration-500">.</span>
-            </span>
-          </span>
-        ) : (
-          'Connect'
-        )}
-      </button>
-    </div>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={handleLogin}
+      disabled={isPending}
+    >
+      {isPending ? (
+        <LoaderIcon className="size-3 animate-spin" />
+      ) : (
+        <GoogleIcon className="size-3" />
+      )}
+      Connect
+    </Button>
   );
 };
 

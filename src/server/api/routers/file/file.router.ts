@@ -28,6 +28,7 @@ export const fileRouter = createTRPCRouter({
           fields:
             'id, name, mimeType, size, webViewLink, iconLink, thumbnailLink',
         });
+
         if (copyFile.status !== 200 || !copyFile.data) {
           throw new TRPCError({
             code: 'BAD_REQUEST',

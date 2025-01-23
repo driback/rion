@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { CopyInput } from '~/server/api/routers/file/file.schema';
 import { api } from '~/trpc/react';
 import { InputConform } from './conform/input';
-import GoogleDriveIcon from './icons/google-drive';
+import GoogleDriveIcon from './icons/google-drive-icon';
 import { useRecentTaskStore } from './providers/recent-task-provider';
 import { Button } from './ui/button';
 

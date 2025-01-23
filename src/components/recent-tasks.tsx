@@ -10,7 +10,9 @@ const RecentTasks = () => {
     _hasHydrated: s._hasHydrated,
   }));
 
-  if (!_hasHydrated) return <p>loading...</p>;
+  if (!_hasHydrated) {
+    return <span className="text-center">loading...</span>;
+  }
 
   if (!tasks.length) {
     return <span className="text-center">You dont have any recent task</span>;

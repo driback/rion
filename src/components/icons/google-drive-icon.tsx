@@ -4,11 +4,7 @@ const GoogleDriveIcon = ({
   width = '24',
   height = '24',
   viewBox = '0 0 24 24',
-  fill = 'none',
-  stroke = 'currentColor',
-  strokeWidth = '2',
-  strokeLinecap = 'round',
-  strokeLinejoin = 'round',
+  fill = 'currentColor',
   xmlns,
   ...props
 }: ComponentProps<'svg'>) => {
@@ -20,10 +16,6 @@ const GoogleDriveIcon = ({
       height={height}
       viewBox={viewBox}
       fill={fill}
-      stroke={stroke}
-      strokeWidth={strokeWidth}
-      strokeLinecap={strokeLinecap}
-      strokeLinejoin={strokeLinejoin}
       {...props}
     >
       <title>Google Drive</title>
