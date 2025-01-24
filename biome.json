@@ -3,7 +3,7 @@
   "extends": ["ultracite"],
   "linter": {
     "rules": {
-      "style": { "useBlockStatements": "off" },
+      "style": { "useBlockStatements": "off", "noNegationElse": "off" },
       "complexity": { "noVoid": "off" },
       "suspicious": { "noConsoleLog": "off", "noConsole": "off" },
       "a11y": {

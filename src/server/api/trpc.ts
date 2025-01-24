@@ -12,6 +12,7 @@ import { cookies } from 'next/headers';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
 import { oAuth2Client } from '~/configs/google-auth';
+import { driveAuthClient } from '~/configs/google-drive';
 import { COOKIE_NAME } from '~/lib/constants';
 import { RedisClient } from '../redis/client';
 import { RedisHashRepository } from '../redis/hash-repository';
@@ -34,6 +35,7 @@ export const createTRPCContext = (opts: {
 }) => {
   return {
     ...opts,
+    driveAuthClient,
   };
 };
 

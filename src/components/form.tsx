@@ -2,18 +2,19 @@
 
 import { useForm } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
-import { LoaderIcon } from 'lucide-react';
-import { memo } from 'react';
+import { ArrowUpIcon, LoaderIcon } from 'lucide-react';
+import { memo, useState } from 'react';
 import { toast } from 'sonner';
 import { CopyInput } from '~/server/api/routers/file/file.schema';
 import { api } from '~/trpc/react';
 import { InputConform } from './conform/input';
-import GoogleDriveIcon from './icons/google-drive-icon';
+import FolderPicker from './folder-picker';
 import { useRecentTaskStore } from './providers/recent-task-provider';
 import { Button } from './ui/button';
 
 const GoogleDriveForm = memo(() => {
   const setTask = useRecentTaskStore((s) => s.setTask);
+  const [folderId, setFolderId] = useState<string | null>(null);
 
   const { mutateAsync, isPending } = api.file.copy.useMutation({
     onSuccess: (data) => {
@@ -25,20 +26,31 @@ const GoogleDriveForm = memo(() => {
 
   const [form, fields] = useForm({
     onValidate({ formData }) {
-      return parseWithZod(formData, { schema: CopyInput });
+      const data = parseWithZod(formData, {
+        schema: CopyInput.pick({ url: true }),
+      });
+      if (data.status !== 'success') {
+        toast.error(data.error?.url);
+      }
+      return data;
     },
-    shouldValidate: 'onBlur',
-    shouldRevalidate: 'onInput',
+    shouldValidate: 'onSubmit',
+    shouldRevalidate: 'onSubmit',
     onSubmit: (event, context) => {
       event.preventDefault();
-      const data = parseWithZod(context.formData, { schema: CopyInput });
+      const data = parseWithZod(context.formData, {
+        schema: CopyInput.pick({ url: true }),
+      });
       if (data.status !== 'success') {
         return data.reply();
       }
 
-      const parsedData = data.value;
-      console.log('🚀 ~ GoogleDriveForm ~ parsedData:', parsedData);
-      void mutateAsync(parsedData);
+      const { url } = data.value;
+      if (folderId) {
+        void mutateAsync({ url, folderId });
+      } else {
+        void mutateAsync({ url });
+      }
     },
   });
 
@@ -47,37 +59,36 @@ const GoogleDriveForm = memo(() => {
       id={form.id}
       onSubmit={form.onSubmit}
       noValidate
-      className="flex w-full max-w-2xl gap-2"
+      className="relative flex w-full max-w-2xl flex-col gap-2"
       aria-label="Google Drive URL submission form"
     >
-      <div className="w-full">
-        <div className="relative w-full">
-          <GoogleDriveIcon
-            data-state={Boolean(fields.url.errors)}
-            className="-translate-y-1/2 absolute top-1/2 left-3 size-4 opacity-60 data-[state=true]:text-red-500 data-[state=false]:opacity-100 data-[state=true]:opacity-100"
-            aria-hidden="true"
-          />
-
-          <InputConform
-            type="url"
-            meta={fields.url}
-            placeholder="https://drive.google.com/file/d/..."
-            className="bg-neutral-900 pl-9 aria-[invalid=true]:border-destructive aria-[invalid=true]:text-red-500 aria-[invalid=true]:focus-visible:border-destructive aria-[invalid=true]:focus-visible:ring-destructive/20"
-            aria-label="Google Drive URL"
-            aria-invalid={Boolean(fields.url.errors)}
-            aria-busy={isPending}
+      <div className="flex w-full flex-col overflow-hidden rounded-lg border bg-neutral-900">
+        <InputConform
+          type="url"
+          meta={fields.url}
+          placeholder="Paste shared google drive file URL."
+          className="h-auto rounded-none border-none p-3 focus-visible:ring-0"
+          aria-label="Google Drive URL"
+          aria-invalid={Boolean(fields.url.errors)}
+          aria-busy={isPending}
+          disabled={isPending}
+        />
+        <div className="flex items-center justify-between p-3">
+          <FolderPicker onConfirm={setFolderId} disabled={isPending} />
+          <Button
+            type="submit"
+            size="icon"
+            className="size-7"
             disabled={isPending}
-          />
+          >
+            {isPending ? (
+              <LoaderIcon className="size-4 animate-spin" />
+            ) : (
+              <ArrowUpIcon className="size-4" />
+            )}
+          </Button>
         </div>
-        {fields.url.errors && (
-          <p role="alert" className="mt-2 text-red-500 text-xs">
-            {fields.url.errors}
-          </p>
-        )}
       </div>
-      <Button type="submit" className="w-20 rounded-lg" disabled={isPending}>
-        {isPending ? <LoaderIcon className="size-4 animate-spin" /> : 'Copy'}
-      </Button>
     </form>
   );
 });
@@ -85,3 +96,6 @@ const GoogleDriveForm = memo(() => {
 GoogleDriveForm.displayName = 'GoogleDriveForm';
 
 export default GoogleDriveForm;
+
+`
+`;

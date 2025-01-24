@@ -1,4 +1,4 @@
-import type { StrictNonNullable } from '~/app/types';
+import type { StrictNonNullable } from '~/types';
 
 import { TRPCError } from '@trpc/server';
 import { driveAuthClient } from '~/configs/google-drive';
@@ -20,16 +20,21 @@ export const fileRouter = createTRPCRouter({
       }
 
       try {
-        const { data: copyData, status } = await driveAuthClient.files.copy({
+        const {
+          data: copyData,
+          status,
+          statusText,
+        } = await driveAuthClient.files.copy({
           fileId,
           fields:
             'id, name, mimeType, size, webViewLink, iconLink, thumbnailLink',
+          requestBody: { parents: !input.folderId ? [] : [input.folderId] },
         });
 
         if (status !== 200 || !copyData) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
-            message: `Failed to copy file: ${status}`,
+            message: `Failed to copy file: ${statusText}`,
           });
         }
 

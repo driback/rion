@@ -7,8 +7,9 @@ export const CopyInput = z.object({
     .min(1, 'URL is required')
     .refine(
       (val) => GOOGLE_DRIVE_REGEX.test(val),
-      'Invalid Google Drive URL format'
+      'Invalid Google Drive URL format.\n Example: https://drive.google.com/file/d/...'
     ),
+  folderId: z.string().optional(),
 });
 export type TCopyInput = z.infer<typeof CopyInput>;
 

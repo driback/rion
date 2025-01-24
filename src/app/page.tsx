@@ -3,6 +3,7 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import AuthGoogle from '~/components/auth-google';
 import GoogleDriveForm from '~/components/form';
+import Greetings from '~/components/greetings';
 import { RecentTaskStoreProvider } from '~/components/providers/recent-task-provider';
 import RecenTasks from '~/components/recent-tasks';
 import { COOKIE_NAME } from '~/lib/constants';
@@ -19,29 +20,34 @@ const Home = async () => {
           <AuthGoogle />
         </header>
         <main className="relative flex w-full flex-col gap-8 pb-20">
-          <div className="mx-auto mt-6 flex w-full max-w-4xl flex-col items-center gap-7">
-            <h1 className="font-medium text-[clamp(2rem,-1.5rem+8vw,3rem)] leading-none">
-              Hello there
-            </h1>
+          <div className="mx-auto mt-6 flex w-full max-w-4xl flex-col items-center gap-2">
+            <Greetings />
           </div>
 
           <div
-            data-state={Boolean(googleSub)}
-            className="relative mx-auto flex w-full max-w-4xl justify-center data-[state=false]:pointer-events-none"
+            aria-disabled={!googleSub}
+            className="relative mx-auto flex w-full max-w-4xl justify-center aria-disabled:pointer-events-none aria-disabled:select-none"
           >
             <GoogleDriveForm />
             <div
-              data-state={Boolean(googleSub)}
-              className="absolute inset-0 data-[state=true]:hidden data-[state=false]:bg-background/60"
+              aria-disabled={!googleSub}
+              className="absolute inset-0 hidden aria-disabled:pointer-events-none aria-disabled:block aria-disabled:bg-background/60"
             />
           </div>
 
-          <div className="relative mx-auto flex w-full max-w-2xl flex-col gap-4">
+          <div
+            aria-disabled={!googleSub}
+            className="relative mx-auto flex w-full max-w-2xl flex-col gap-4 aria-disabled:pointer-events-none aria-disabled:select-none"
+          >
             <div className="flex items-center">
               <FileCheckIcon className="mr-2 size-4" />
               <h2 className="text-sm">Your recent tasks</h2>
             </div>
             <RecenTasks />
+            <div
+              aria-disabled={!googleSub}
+              className="absolute inset-0 hidden aria-disabled:block aria-disabled:bg-background/60"
+            />
           </div>
         </main>
       </div>
