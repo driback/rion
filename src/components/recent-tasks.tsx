@@ -2,7 +2,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRecentTaskStore } from './providers/recent-task-provider';
-import ReCopy from './re-copy';
 
 const RecentTasks = () => {
   const { tasks, _hasHydrated } = useRecentTaskStore((s) => ({
@@ -35,10 +34,6 @@ const RecentTasks = () => {
           >
             {data.name}
           </Link>
-
-          <div className="ml-auto flex items-center gap-2">
-            <ReCopy url={data.originalLink} />
-          </div>
         </li>
       ))}
     </ul>

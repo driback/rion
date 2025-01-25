@@ -20,7 +20,7 @@ export const folderRouter = createTRPCRouter({
           statusText,
           data: getFolders,
         } = await driveAuthClient.files.list({
-          q: `'${folder}' in parents and mimeType='application/vnd.google-apps.folder' and trashed = false`,
+          q: `'${folder}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
           fields: 'files(id, name)',
         });
 
