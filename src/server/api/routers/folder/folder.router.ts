@@ -1,17 +1,20 @@
 import { TRPCError } from '@trpc/server';
 import type { StrictNonNullable } from '~/types';
-import { createTRPCRouter, protectedProcedure } from '../../trpc';
+import { createTRPCRouter, integrationProcedure } from '../../trpc';
 import {
+  CopyFolderInput,
   GetFolderInput,
   GetFolderOutput,
   type TGetFolderOutput,
 } from './folder.schema';
+import { extractFolderId } from './folder.util';
+import { copyFolder } from './methods/copy-folder';
 
 export const folderRouter = createTRPCRouter({
-  get: protectedProcedure
+  get: integrationProcedure
     .input(GetFolderInput)
     .output(GetFolderOutput)
-    .mutation(async ({ ctx: { driveAuthClient }, input }) => {
+    .mutation(async ({ ctx: { driveClient }, input }) => {
       const folder = input?.folderId ?? 'root';
 
       try {
@@ -19,7 +22,7 @@ export const folderRouter = createTRPCRouter({
           status,
           statusText,
           data: getFolders,
-        } = await driveAuthClient.files.list({
+        } = await driveClient.files.list({
           q: `'${folder}' in parents and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
           fields: 'files(id, name)',
         });
@@ -50,5 +53,14 @@ export const folderRouter = createTRPCRouter({
           cause: error,
         });
       }
+    }),
+  copy: integrationProcedure
+    .input(CopyFolderInput)
+    .mutation(async ({ ctx: { driveClient }, input }) => {
+      const folderId = extractFolderId(input.folderUrl);
+      if (!folderId) {
+        throw new TRPCError({ code: 'BAD_REQUEST' });
+      }
+      return await copyFolder(driveClient, folderId, input.parentFolderId);
     }),
 });

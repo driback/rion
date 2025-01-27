@@ -19,5 +19,5 @@ if (env.NODE_ENV === 'development') {
   global.__driveAuthClient = initializeDriveClient(oAuth2Client);
 }
 
-export const driveAuthClient =
+export const driveClient =
   global.__driveAuthClient ?? initializeDriveClient(oAuth2Client);

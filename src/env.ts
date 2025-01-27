@@ -1,18 +1,29 @@
 import { createEnv } from '@t3-oss/env-core';
+import { vercel } from '@t3-oss/env-core/presets';
 import { z } from 'zod';
 
 export const env = createEnv({
+  extends: [vercel()],
   server: {
+    IMAGEKIT_PUBLIC_KEY: z.string(),
+    IMAGEKIT_PRIVATE_KEY: z.string(),
+    IMAGEKIT_URL_ENDPOINT: z.string().url(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     GOOGLE_REDIRECT_URI: z.string().url(),
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
+    DATABASE_URL: z
+      .string()
+      .regex(
+        /^postgres(ql)?:\/\/.+/i,
+        'Must be a valid PostgreSQL connection string starting with postgres:// or postgresql://'
+      ),
     REDIS_URL: z
       .string()
       .regex(
-        /^rediss:\/\/.+/i,
+        /^redis(s)?:\/\/.+/i,
         'Must be a valid Redis connection string starting with redis://'
       ),
   },

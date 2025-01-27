@@ -1,16 +1,15 @@
 import type { StrictNonNullable } from '~/types';
 
 import { TRPCError } from '@trpc/server';
-import { driveAuthClient } from '~/configs/google-drive';
-import { createTRPCRouter, protectedProcedure } from '../../trpc';
+import { createTRPCRouter, integrationProcedure } from '../../trpc';
 import { CopyInput, CopyOutput, type TCopyOutput } from './file.schema';
 import { extractFileId } from './file.util';
 
 export const fileRouter = createTRPCRouter({
-  copy: protectedProcedure
+  copy: integrationProcedure
     .input(CopyInput)
     .output(CopyOutput)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx: { driveClient } }) => {
       const fileId = extractFileId(input.url);
       if (!fileId) {
         throw new TRPCError({
@@ -24,7 +23,7 @@ export const fileRouter = createTRPCRouter({
           data: copyData,
           status,
           statusText,
-        } = await driveAuthClient.files.copy({
+        } = await driveClient.files.copy({
           fileId,
           fields:
             'id, name, mimeType, size, webViewLink, iconLink, thumbnailLink',

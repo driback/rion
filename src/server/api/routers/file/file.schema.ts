@@ -11,7 +11,6 @@ export const CopyInput = z.object({
     ),
   folderId: z.string().optional(),
 });
-export type TCopyInput = z.infer<typeof CopyInput>;
 
 export const CopyOutput = z.object({
   id: z.string(),

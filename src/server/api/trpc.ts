@@ -6,14 +6,13 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC } from '@trpc/server';
+import { TRPCError, initTRPC } from '@trpc/server';
 import type { Credentials } from 'google-auth-library';
-import { cookies } from 'next/headers';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
+import { auth } from '~/configs/auth';
 import { oAuth2Client } from '~/configs/google-auth';
-import { driveAuthClient } from '~/configs/google-drive';
-import { COOKIE_NAME } from '~/lib/constants';
+import { driveClient } from '~/configs/google-drive';
 import { RedisClient } from '../redis/client';
 import { RedisHashRepository } from '../redis/hash-repository';
 import { KEYS } from '../redis/keys';
@@ -30,12 +29,20 @@ import { KEYS } from '../redis/keys';
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = (opts: {
+export const createTRPCContext = async (opts: {
   headers: Headers;
 }) => {
+  const session = await auth.api.getSession({
+    query: {
+      disableCookieCache: true,
+    },
+    headers: opts.headers,
+  });
+
   return {
     ...opts,
-    driveAuthClient,
+    driveClient,
+    session,
   };
 };
 
@@ -88,30 +95,30 @@ export const createTRPCRouter = t.router;
  * network latency that would occur in production but not in local development.
  */
 
-const authMiddleware = t.middleware(async ({ next }) => {
-  try {
-    const email = (await cookies()).get(COOKIE_NAME.GOOGlE_SUB)?.value;
-    if (!email) {
-      throw new Error('Google email not found in cookies');
-    }
+// const googleDriveMiddleware = t.middleware(async ({ next }) => {
+//   try {
+//     const email = (await cookies()).get(COOKIE_NAME.GOOGlE_SUB)?.value;
+//     if (!email) {
+//       throw new Error('Google email not found in cookies');
+//     }
 
-    const credentialsCache = new RedisHashRepository<Required<Credentials>>(
-      KEYS.GOOGLE_CREDENTIALS(email),
-      RedisClient
-    );
+//     const credentialsCache = new RedisHashRepository<Required<Credentials>>(
+//       KEYS.GOOGLE_CREDENTIALS(email),
+//       RedisClient
+//     );
 
-    const tokens = await credentialsCache.getAll();
-    if (!tokens) {
-      throw new Error('Google credentials not found in cache');
-    }
+//     const tokens = await credentialsCache.getAll();
+//     if (!tokens) {
+//       throw new Error('Google credentials not found in cache');
+//     }
 
-    oAuth2Client.setCredentials(tokens);
-    return await next();
-  } catch (error) {
-    console.error('Authentication error:', error);
-    throw error;
-  }
-});
+//     oAuth2Client.setCredentials(tokens);
+//     return await next();
+//   } catch (error) {
+//     console.error('Authentication error:', error);
+//     throw error;
+//   }
+// });
 
 /**
  * Public (unauthenticated) procedure
@@ -121,4 +128,32 @@ const authMiddleware = t.middleware(async ({ next }) => {
  * are logged in.
  */
 export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure.use(authMiddleware);
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.session?.session) {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+  return next({
+    ctx: { session: { ...ctx.session, user: ctx.session.user } },
+  });
+});
+export const integrationProcedure = protectedProcedure.use(
+  async ({ ctx, next }) => {
+    try {
+      const credentialsCache = new RedisHashRepository<Required<Credentials>>(
+        KEYS.GOOGLE_CREDENTIALS(ctx.session.user.id),
+        RedisClient
+      );
+
+      const tokens = await credentialsCache.getAll();
+      if (!tokens) {
+        throw new Error('Google credentials not found in cache');
+      }
+
+      oAuth2Client.setCredentials(tokens);
+      return await next();
+    } catch (error) {
+      console.error('Authentication error:', error);
+      throw error;
+    }
+  }
+);

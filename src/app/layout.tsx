@@ -1,14 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Geist_Mono } from 'next/font/google';
 import { Toaster } from 'sonner';
 import ThemeProvider from '~/components/providers/theme-provider';
+import { AppWrapper } from '~/components/wrapper';
 import { TRPCReactProvider } from '~/trpc/react';
 
 import '~/styles/globals.css';
 
-const jakartaSans = Plus_Jakarta_Sans({ subsets: ['latin'] });
+const font = Geist_Mono({ subsets: ['latin'] });
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -47,9 +48,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${jakartaSans.className} antialiased`}>
+      <body className={`${font.className} antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="dark">
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <AppWrapper>{children}</AppWrapper>
+          </TRPCReactProvider>
           <Toaster pauseWhenPageIsHidden richColors theme="dark" />
         </ThemeProvider>
       </body>

@@ -1,3 +1,3 @@
 export const KEYS = {
-  GOOGLE_CREDENTIALS: (email: string) => `google:credentials:${email}`,
+  GOOGLE_CREDENTIALS: (userId: string) => `google:credentials:${userId}`,
 };

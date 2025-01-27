@@ -2,5 +2,5 @@
 
 import { api } from '~/trpc/server';
 
-export const loginAction = api.auth.login;
-export const logoutAction = api.auth.logout;
+export const connectGoogleAction = api.integration.google.connect;
+export const disconnectGoogleAction = api.integration.google.disconnect;

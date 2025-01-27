@@ -10,3 +10,8 @@ export const GetFolderInput = z
   .optional();
 export const GetFolderOutput = z.object({ data: FolderSchema.array() });
 export type TGetFolderOutput = z.infer<typeof GetFolderOutput>;
+
+export const CopyFolderInput = z.object({
+  folderUrl: z.string().url(),
+  parentFolderId: z.string().optional(),
+});

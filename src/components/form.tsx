@@ -7,7 +7,7 @@ import { memo, useState } from 'react';
 import { toast } from 'sonner';
 import { CopyInput } from '~/server/api/routers/file/file.schema';
 import { api } from '~/trpc/react';
-import { InputConform } from './conform/input';
+import { InputConform } from './conform/input-conform';
 import FolderPicker from './folder-picker';
 import { useRecentTaskStore } from './providers/recent-task-provider';
 import { Button } from './ui/button';
@@ -59,14 +59,14 @@ const GoogleDriveForm = memo(() => {
       id={form.id}
       onSubmit={form.onSubmit}
       noValidate
-      className="relative flex w-full max-w-2xl flex-col gap-2"
+      className="relative flex w-full flex-col gap-2"
       aria-label="Google Drive URL submission form"
     >
       <div className="flex w-full flex-col overflow-hidden rounded-lg border bg-neutral-900">
         <InputConform
           type="url"
           meta={fields.url}
-          placeholder="Paste shared google drive file URL."
+          placeholder="Paste public google drive file URL."
           className="h-auto rounded-none border-none p-3 focus-visible:ring-0"
           aria-label="Google Drive URL"
           aria-invalid={Boolean(fields.url.errors)}

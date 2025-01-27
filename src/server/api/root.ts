@@ -2,6 +2,8 @@ import { createCallerFactory, createTRPCRouter } from '~/server/api/trpc';
 import { authRouter } from './routers/auth/auth.router';
 import { fileRouter } from './routers/file/file.router';
 import { folderRouter } from './routers/folder/folder.router';
+import { imageRouter } from './routers/image/image.router';
+import { integrationRouter } from './routers/integration/integration.router';
 
 /**
  * This is the primary router for your server.
@@ -10,8 +12,10 @@ import { folderRouter } from './routers/folder/folder.router';
  */
 export const appRouter = createTRPCRouter({
   auth: authRouter,
+  integration: integrationRouter,
   file: fileRouter,
   folder: folderRouter,
+  image: imageRouter,
 });
 
 // export type definition of API
