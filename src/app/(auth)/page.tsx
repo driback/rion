@@ -20,7 +20,7 @@ const Home = async () => {
     <RecentTaskStoreProvider>
       <PageMain>
         {isIntegrated ? null : (
-          <div className="mx-auto flex w-fit items-center gap-2 rounded-full border px-3 py-2 text-[.8rem]">
+          <div className="mx-auto flex w-fit items-center gap-2 rounded-full border px-3 py-2 font-medium text-sm">
             <InfoIcon className="size-4" />
             <p>You have to connect your google drive before using it.</p>
             <ConnectGoogle minimal />
