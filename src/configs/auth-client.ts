@@ -15,4 +15,4 @@ const client = createAuthClient({
   },
 });
 
-export const { signUp, signIn, signOut } = client;
+export const { signUp, signIn, signOut, updateUser } = client;

@@ -1,9 +1,9 @@
 import Image from 'next/image';
-import { Input } from '~/components/ui/input';
 import { Container, PageMain } from '~/components/wrapper';
 import ConnectGoogle from '~/features/integration/connect-google';
 import SettingsBlock from '~/features/settings/settings-block';
 import SettingsSection from '~/features/settings/settings-section';
+import SettingsUsername from '~/features/settings/settings-username';
 import { HydrateClient, api } from '~/trpc/server';
 
 const SettingsPage = async () => {
@@ -32,11 +32,7 @@ const SettingsPage = async () => {
               title="Username"
               subtitle="You can edit your username here."
               rightContent={
-                <Input
-                  disabled
-                  value={user.username as string}
-                  className="w-48 bg-secondary"
-                />
+                <SettingsUsername username={user.username as string} />
               }
             />
           </SettingsBlock>
