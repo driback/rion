@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { Geist_Mono } from 'next/font/google';
 import { Toaster } from 'sonner';
 import ThemeProvider from '~/components/providers/theme-provider';
-import { AppWrapper } from '~/components/wrapper';
+import { AppWrapper } from '~/features/wrapper';
 import { TRPCReactProvider } from '~/trpc/react';
 
 import '~/styles/globals.css';

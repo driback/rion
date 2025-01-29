@@ -9,7 +9,7 @@ export const AppWrapper = ({
   return (
     <div
       className={cn(
-        'relative mx-auto flex min-h-[100dvh] w-dvw max-w-screen-xl flex-col overflow-clip',
+        'relative mx-auto flex min-h-[100dvh] w-dvw max-w-screen-xl flex-col overflow-clip px-px',
         className
       )}
       {...props}

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { PageHeader } from '~/components/wrapper';
 import AuthUser from '~/features/auth/auth-user';
+import { PageHeader } from '~/features/wrapper';
 import type { LayoutProps } from '~/types';
 
 const PageLayout = ({ children }: LayoutProps) => {

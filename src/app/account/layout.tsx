@@ -1,5 +1,5 @@
 import { FlickeringGrid } from '~/components/ui/flickering-grid';
-import { PageMain } from '~/components/wrapper';
+import { PageMain } from '~/features/wrapper';
 import type { LayoutProps } from '~/types';
 
 const AuthLayout = ({ children }: LayoutProps) => {

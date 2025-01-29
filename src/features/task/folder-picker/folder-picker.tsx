@@ -5,9 +5,6 @@ import type { TFolderSchema } from '~/server/api/routers/folder/folder.schema';
 import { FolderIcon, LoaderIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { api } from '~/trpc/react';
-import FolderBreadcrumbs from './folder-breadcrumb';
-import FolderList from './folder-list';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,8 +14,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from './ui/alert-dialog';
-import { Button } from './ui/button';
+} from '~/components/ui/alert-dialog';
+import { Button } from '~/components/ui/button';
+import { api } from '~/trpc/react';
+import FolderBreadcrumbs from './folder-breadcrumb';
+import FolderList from './folder-list';
 
 type TBreadcrumbItem = {
   id: string;

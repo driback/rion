@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import List from './list';
+import List from '~/components/list';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,7 +7,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from './ui/breadcrumb';
+} from '~/components/ui/breadcrumb';
 
 type TBreadcrumbItem = {
   id: string;

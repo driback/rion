@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
 import GoogleIcon from '~/components/icons/googl-icon';
 import { Button } from '~/components/ui/button';
-import { connectGoogleAction } from '~/server/actions/api.action';
+import {
+  connectGoogleAction,
+  disconnectGoogleAction,
+} from '~/server/actions/api.action';
 
 const ConnectGoogle = ({
   isConected,
@@ -14,10 +17,17 @@ const ConnectGoogle = ({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  const handleLogin = () => {
+  const handleConnect = () => {
     startTransition(async () => {
+      if (isConected) {
+        await disconnectGoogleAction();
+        router.refresh();
+        return;
+      }
+
       const { url } = await connectGoogleAction();
       router.push(url);
+      return;
     });
   };
 
@@ -25,7 +35,7 @@ const ConnectGoogle = ({
     return (
       <button
         type="button"
-        onClick={handleLogin}
+        onClick={handleConnect}
         disabled={isPending || isConected}
         className="hover:underline"
       >
@@ -38,15 +48,15 @@ const ConnectGoogle = ({
     <Button
       variant="outline"
       size="sm"
-      onClick={handleLogin}
-      disabled={isPending || isConected}
+      onClick={handleConnect}
+      disabled={isPending}
     >
       {isPending ? (
         <LoaderIcon className="size-3 animate-spin" />
       ) : (
         <GoogleIcon className="size-3" />
       )}
-      {isConected ? 'Connected' : 'Connect'}
+      {isConected ? 'Disconnect' : 'Connect'}
     </Button>
   );
 };

@@ -1,6 +1,6 @@
 import { FolderIcon } from 'lucide-react';
-import List from './list';
-import { Button } from './ui/button';
+import List from '~/components/list';
+import { Button } from '~/components/ui/button';
 
 type TFolderSchema = {
   id: string;

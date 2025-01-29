@@ -1,4 +1,5 @@
 const FILE_ID_REGEX = /\/file\/d\/([^/]+)/;
+
 export const GOOGLE_DRIVE_REGEX =
   /^https:\/\/drive\.google\.com\/file\/d\/[a-zA-Z0-9_-]+(?:\/.*)?$/;
 

@@ -1,6 +1,8 @@
 import { relations } from 'drizzle-orm';
 import {
   boolean,
+  integer,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -98,6 +100,25 @@ export const integrationToUser = pgTable('integration_to_user', {
     .notNull(),
 });
 
+export const taskType = pgEnum('task_type', ['file', 'folder']);
+
+export const task = pgTable('task', {
+  id: text('id').primaryKey().notNull(),
+  userId: text('user_id')
+    .references(() => user.id)
+    .notNull(),
+  type: taskType().notNull(),
+  name: text('name').notNull(),
+  mimeType: text('mime_type').notNull(),
+  size: integer('size').notNull(),
+  iconLink: text('icon_link').notNull(),
+  webViewLink: text('web_view_link').notNull(),
+  originalLink: text('original_link').notNull(),
+  createdAt: timestamp('created_at', { precision: 3, mode: 'date' })
+    .notNull()
+    .$default(() => new Date()),
+});
+
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
@@ -108,6 +129,7 @@ export const accountRelations = relations(account, ({ one }) => ({
 export const userRelations = relations(user, ({ many }) => ({
   accounts: many(account),
   sessions: many(session),
+  tasks: many(task),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({

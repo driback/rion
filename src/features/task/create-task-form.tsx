@@ -3,22 +3,22 @@
 import { useForm } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
 import { ArrowUpIcon, LoaderIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { memo, useState } from 'react';
 import { toast } from 'sonner';
-import { CopyInput } from '~/server/api/routers/file/file.schema';
+import { CopyFileInput } from '~/server/api/routers/task/task.schema';
 import { api } from '~/trpc/react';
-import { InputConform } from './conform/input-conform';
-import FolderPicker from './folder-picker';
-import { useRecentTaskStore } from './providers/recent-task-provider';
-import { Button } from './ui/button';
+import { InputConform } from '../../components/conform/input-conform';
+import { Button } from '../../components/ui/button';
+import FolderPicker from './folder-picker/folder-picker';
 
-const GoogleDriveForm = memo(() => {
-  const setTask = useRecentTaskStore((s) => s.setTask);
+const CreateTaskForm = memo(() => {
   const [folderId, setFolderId] = useState<string | null>(null);
+  const router = useRouter();
 
-  const { mutateAsync, isPending } = api.file.copy.useMutation({
-    onSuccess: (data) => {
-      setTask(data);
+  const { mutateAsync, isPending } = api.task.copyFile.useMutation({
+    onSuccess: () => {
+      router.refresh();
       toast.success('File copied successfully');
     },
     onError: (error) => toast.error(error.message),
@@ -27,7 +27,7 @@ const GoogleDriveForm = memo(() => {
   const [form, fields] = useForm({
     onValidate({ formData }) {
       const data = parseWithZod(formData, {
-        schema: CopyInput.pick({ url: true }),
+        schema: CopyFileInput.pick({ url: true }),
       });
       if (data.status !== 'success') {
         toast.error(data.error?.url);
@@ -39,7 +39,7 @@ const GoogleDriveForm = memo(() => {
     onSubmit: (event, context) => {
       event.preventDefault();
       const data = parseWithZod(context.formData, {
-        schema: CopyInput.pick({ url: true }),
+        schema: CopyFileInput.pick({ url: true }),
       });
       if (data.status !== 'success') {
         return data.reply();
@@ -93,9 +93,6 @@ const GoogleDriveForm = memo(() => {
   );
 });
 
-GoogleDriveForm.displayName = 'GoogleDriveForm';
+CreateTaskForm.displayName = 'CreateTaskForm';
 
-export default GoogleDriveForm;
-
-`
-`;
+export default CreateTaskForm;

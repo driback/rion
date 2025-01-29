@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { GOOGLE_DRIVE_REGEX } from './file.util';
+import { GOOGLE_DRIVE_REGEX } from './task.util';
 
-export const CopyInput = z.object({
+export const CopyFileInput = z.object({
   url: z
     .string()
     .min(1, 'URL is required')
@@ -11,15 +11,21 @@ export const CopyInput = z.object({
     ),
   folderId: z.string().optional(),
 });
+export type TCopyFileInput = z.infer<typeof CopyFileInput>;
 
-export const CopyOutput = z.object({
+export const GetRecentTaskInput = z.object({
+  userId: z.string(),
+  page: z.number(),
+  limit: z.number(),
+});
+export type TGetRecentTaskInput = z.infer<typeof GetRecentTaskInput>;
+
+export const GetRecentTaskOutput = z.object({
   id: z.string(),
   name: z.string(),
   mimeType: z.string(),
   size: z.number(),
   webViewLink: z.string(),
   iconLink: z.string(),
-  thumbnailLink: z.string().optional(),
   originalLink: z.string(),
 });
-export type TCopyOutput = z.infer<typeof CopyOutput>;
